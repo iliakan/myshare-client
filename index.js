@@ -38,7 +38,6 @@ async function run() {
 
   console.log('Sharing ' + filePath);
 
-  console.log(config)
   let url = new URL('/share', config.server);
   url.searchParams.set('secret', config.secret);
 
