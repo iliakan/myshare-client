@@ -4,6 +4,8 @@ let request = require('request-promise');
 let fs = require('fs');
 let path = require('path');
 let chalk = require('chalk');
+const clipboardy = require('clipboardy');
+
 let configPaths = ['/etc/myshare', require('os').homedir() + '/.myshare'];
 const configPath = configPaths.find(p => fs.existsSync(p));
 
@@ -55,6 +57,7 @@ async function run() {
     }
   });
 
+  clipboardy.writeSync(link);
   console.log(link);
 }
 
