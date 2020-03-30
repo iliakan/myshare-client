@@ -3,7 +3,7 @@
 let request = require('request-promise');
 let fs = require('fs');
 let path = require('path');
-
+let chalk = require('chalk');
 let configPaths = ['/etc/myshare', require('os').homedir() + '/.myshare'];
 const configPath = configPaths.find(p => fs.existsSync(p));
 
