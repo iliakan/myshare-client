@@ -26,8 +26,14 @@ async function run() {
 
   let filePath = process.argv[2];
 
+  if (!filePath) {
+    console.error(chalk.red("Usage: share <filepath>"));
+    process.exit(1);
+  }
+
   if (!fs.existsSync(filePath)) {
-    throw new Error("No such file: " + filePath);
+    console.error(chalk.red('No such file: ' + filePath));
+    process.exit(1);
   }
 
   console.log('Sharing ' + filePath);
