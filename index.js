@@ -5,6 +5,7 @@ let fs = require('fs');
 let path = require('path');
 let chalk = require('chalk');
 const clipboardy = require('clipboardy');
+const minimist = require('minimist');
 
 let configPaths = ['/etc/myshare', require('os').homedir() + '/.myshare'];
 const configPath = configPaths.find(p => fs.existsSync(p));
@@ -26,10 +27,14 @@ if (!config.secret) {
 
 async function run() {
 
-  let filePath = process.argv[2];
+  let args = minimist(process.argv.slice(2), { boolean: true});
+
+  // console.log(args)
+  let filePath = args._[0];
+
 
   if (!filePath) {
-    console.error(chalk.red("Usage: share <filepath>"));
+    console.error(chalk.red("Usage: share [--update] <filepath>"));
     process.exit(1);
   }
 
@@ -41,20 +46,23 @@ async function run() {
   console.log('Sharing ' + filePath);
 
   let url = new URL('/share', config.server);
-  url.searchParams.set('secret', config.secret);
 
+  let formData = {
+    update: 'update' in args ? 1 : 0,
+    secret: config.secret,
+    file: {
+      value: fs.createReadStream(filePath),
+      options: {
+        filename: path.basename(filePath)
+      }
+    }
+  };
+
+  // console.log(formData);
   let link = await request({
     method: 'POST',
     url: url,
-    formData: {
-      name: 'file',
-      file: {
-        value: fs.createReadStream(filePath),
-        options: {
-          filename: path.basename(filePath)
-        }
-      }
-    }
+    formData
   });
 
   clipboardy.writeSync(link);
